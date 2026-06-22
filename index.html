@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界盃足球入門知識庫</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft JhengHei,微軟正黑體,sans-serif;}
+        body{background:#f5f7fa;color:#222;line-height:1.7}
+        header{background:#08306b;color:white;padding:2rem;text-align:center}
+        .container{max-width:1200px;margin:0 auto;padding:20px}
+        section{background:white;border-radius:10px;padding:25px;margin-bottom:20px;box-shadow:0 2px 8px #ddd}
+        h2{color:#08306b;border-left:5px solid #ff6b00;padding-left:10px;margin-bottom:15px}
+        h3{margin:12px 0;color:#333}
+        p,ul{margin:8px 0 8px 15px}
+        ul li{margin:6px 0}
+        /* 越位示意圖畫布容器 */
+        .offside-box{display:flex;gap:30px;flex-wrap:wrap;align-items:center}
+        canvas{border:2px solid #08306b;background:#e8f0fe;border-radius:6px}
+        .canvas-desc{flex:1;min-width:300px}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+        @media(max-width:768px){.grid{grid-template-columns:1fr}.offside-box{flex-direction:column}}
+        .tag{display:inline-block;background:#ff6b00;color:white;padding:3px 8px;border-radius:4px;font-size:14px;margin:3px}
+    </style>
+</head>
+<body>
+<header>
+    <h1>世界盃足球專業觀賽知識手冊</h1>
+    <p>零基礎學賽制、規則、陣型｜附越位示意圖</p>
+</header>
+<div class="container">
+
+<!-- 模塊1：2026世界盃賽制 -->
+<section>
+    <h2>一、2026世界盃最新賽制</h2>
+    <h3>1. 小組賽（48隊，12組×4隊）</h3>
+    <ul>
+        <li>賽制：單循環，每隊踢3場</li>
+        <li>積分：勝3分｜和1分｜負0分</li>
+        <li>出線：小組前2名 + 8隊最佳第三，合共32隊入淘汰賽</li>
+        <li>排名順序：積分＞淨勝球＞總入球＞對賽成績＞公平競技</li>
+        <li>小組賽和波直接完場，無加時/十二碼</li>
+    </ul>
+    <h3>2. 淘汰賽（單場淘汰）</h3>
+    <p>1/16決賽 → 1/8 → 1/4 → 準決賽 → 季軍賽 → 決賽</p>
+    <ul>
+        <li>90分鐘+補時和波：30分鐘加時（上下半場各15分鐘）</li>
+        <li>加時仍和：十二碼大戰</li>
+    </ul>
+</section>
+
+<!-- 模塊2：越位規則+互動示意圖 -->
+<section>
+    <h2>二、重點規則：越位（附示意圖）</h2>
+    <div class="offside-box">
+        <div>
+            <canvas id="offsideCanvas" width="420" height="280"></canvas>
+            <p style="text-align:center;margin-top:8px;">藍：防守方｜紅：進攻方｜黑：皮球</p>
+        </div>
+        <div class="canvas-desc">
+            <h3>越位成立條件（全部要滿足）</h3>
+            <ul>
+                <li>1. 進攻球員身處<b>對方半場</b></li>
+                <li>2. 傳球瞬間，球員比<b>對方倒數第二名球員+皮球</b>更貼近對方底線</li>
+                <li>門將計算為防守球員；界外球、後場回傳無越位</li>
+            </ul>
+            <p><span class="tag">左圖紅點：越位位置</span> <span class="tag">右側紅點：合法不越位</span></p>
+        </div>
+    </div>
+    <h3>其他核心規則</h3>
+    <ul>
+        <li>黃牌：警告；兩黃變紅直接離場，球隊少打一人</li>
+        <li>十二碼：禁區內防守犯規/手球，單對一門將射門</li>
+        <li>VAR：回看越位、十二碼、入球、紅牌爭議判決</li>
+    </ul>
+</section>
+
+<!-- 模塊3：陣型與位置 -->
+<section class="grid">
+    <div>
+        <h2>三、常用場上陣型</h2>
+        <ul>
+            <li><b>4-2-3-1</b>：攻守平衡，世界盃主流</li>
+            <li><b>4-3-3</b>：主攻邊路、高位搶逼</li>
+            <li><b>5-4-1</b>：防反專用，縮後場抓反擊</li>
+            <li><b>3-5-2</b>：翼衛上下走動，主打控球</li>
+        </ul>
+    </div>
+    <div>
+        <h2>關鍵位置解釋</h2>
+        <ul>
+            <li>後腰：中場防線、負責分波</li>
+            <li>邊鋒：邊路突破、傳中/內切射門</li>
+            <li>中鋒：禁區搶點、做樁牽制後衛</li>
+        </ul>
+    </div>
+</section>
+
+<!-- 模塊4：觀賽術語 -->
+<section>
+    <h2>四、解說常用術語</h2>
+    <div>
+        <span class="tag">梅開二度=單場2球</span>
+        <span class="tag">帽子戲法=單場3球</span>
+        <span class="tag">大四喜=4球</span>
+        <span class="tag">烏龍=入自家龍門</span>
+        <span class="tag">世界波=遠射靚波</span>
+        <span class="tag">高位逼搶=全隊壓前搶波</span>
+        <span class="tag">淨勝球=總入球-總失球</span>
+    </div>
+</section>
+
+<!-- 模塊5：提升觀賽眼光方法 -->
+<section>
+    <h2>五、練習變專業球迷</h2>
+    <ol>
+        <li>固定追2隊，熟記首發陣容同位置</li>
+        <li>賽後睇數據：控球率、射正次數、傳球成功率</li>
+        <li>觀察換人邏輯：落後換前鋒、領先換後腰</li>
+    </ol>
+</section>
+
+</div>
+
+<script>
+// JS繪製越位示意圖
+const canvas = document.getElementById('offsideCanvas');
+const ctx = canvas.getContext('2d');
+// 場地線
+ctx.fillStyle='#e8f0fe';
+ctx.fillRect(0,0,420,280);
+ctx.strokeStyle='#08306b';
+ctx.lineWidth=2;
+// 中場線
+ctx.beginPath();ctx.moveTo(210,0);ctx.lineTo(210,280);ctx.stroke();
+// 底線禁區示意
+ctx.strokeRect(360,60,60,160);
+// 防守球員(藍圓)
+ctx.fillStyle='#08306b';
+function drawCircle(x,y,r){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
+drawCircle(300,80,12);
+drawCircle(300,140,12); //倒數第二個防守球員
+drawCircle(300,200,12);
+// 皮球
+ctx.fillStyle='#222';
+drawCircle(330,140,8);
+// 越位紅點（皮球+倒數後衛前面）
+ctx.fillStyle='#e63946';
+drawCircle(350,140,12);
+// 合法位置紅點（後衛後面）
+drawCircle(260,140,12);
+// 標註文字
+ctx.fillStyle='#000';
+ctx.font='13px JhengHei';
+ctx.fillText('越位(紅)',355,125);
+ctx.fillText('合法(紅)',230,125);
+ctx.fillText('倒數第2後衛',265,155);
+</script>
+</body>
+</html>
