@@ -2,159 +2,1486 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>世界盃足球入門知識庫</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>世界盃足球專業觀賽知識庫</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft JhengHei,微軟正黑體,sans-serif;}
-        body{background:#f5f7fa;color:#222;line-height:1.7}
-        header{background:#08306b;color:white;padding:2rem;text-align:center}
-        .container{max-width:1200px;margin:0 auto;padding:20px}
-        section{background:white;border-radius:10px;padding:25px;margin-bottom:20px;box-shadow:0 2px 8px #ddd}
-        h2{color:#08306b;border-left:5px solid #ff6b00;padding-left:10px;margin-bottom:15px}
-        h3{margin:12px 0;color:#333}
-        p,ul{margin:8px 0 8px 15px}
-        ul li{margin:6px 0}
-        /* 越位示意圖畫布容器 */
-        .offside-box{display:flex;gap:30px;flex-wrap:wrap;align-items:center}
-        canvas{border:2px solid #08306b;background:#e8f0fe;border-radius:6px}
-        .canvas-desc{flex:1;min-width:300px}
-        .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-        @media(max-width:768px){.grid{grid-template-columns:1fr}.offside-box{flex-direction:column}}
-        .tag{display:inline-block;background:#ff6b00;color:white;padding:3px 8px;border-radius:4px;font-size:14px;margin:3px}
+        :root {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --primary: #0a1f44;
+            --accent: #e85d04;
+            --accent2: #f4a261;
+            --text: #1a1a1a;
+            --text2: #4a4a4a;
+            --border: #e0e0e0;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Segoe UI', 'Microsoft JhengHei', '微軟正黑體', 'PingFang HK', sans-serif;
+            --nav-height: 64px;
+            --bottom-nav-height: 68px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            line-height: 1.7;
+            min-height: 100vh;
+            padding-bottom: calc(var(--bottom-nav-height) + 24px);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── 頂部導航欄（桌面端） ── */
+        .top-nav {
+            display: none;
+            background: var(--primary);
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+        }
+        .top-nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            height: var(--nav-height);
+            padding: 0 20px;
+            overflow-x: auto;
+        }
+        .top-nav .logo {
+            font-weight: 800;
+            font-size: 1.15rem;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+        .top-nav .logo span {
+            color: var(--accent2);
+        }
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.72);
+            padding: 10px 18px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: var(--font);
+            position: relative;
+        }
+        .nav-tab:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .nav-tab.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+        }
+        .nav-tab .nav-icon {
+            display: inline-block;
+            margin-right: 5px;
+            font-size: 1rem;
+        }
+
+        /* ── 底部導航欄（移動端） ── */
+        .bottom-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            height: var(--bottom-nav-height);
+            box-shadow: 0 -3px 18px rgba(0, 0, 0, 0.08);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+            justify-content: space-around;
+            align-items: center;
+        }
+        .bottom-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #888;
+            transition: var(--transition);
+            padding: 6px 8px;
+            border-radius: 10px;
+            min-width: 52px;
+        }
+        .bottom-nav-btn .bn-icon {
+            font-size: 1.35rem;
+            transition: var(--transition);
+        }
+        .bottom-nav-btn.active {
+            color: var(--accent);
+        }
+        .bottom-nav-btn.active .bn-icon {
+            transform: translateY(-2px);
+        }
+
+        /* ── 主容器 ── */
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px 14px 8px;
+        }
+        .page {
+            display: none;
+            animation: fadeSlideIn 0.35s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── 卡片 ── */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: clamp(16px, 3vw, 28px);
+            margin-bottom: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        .card h2 {
+            color: var(--primary);
+            font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+            margin-bottom: 16px;
+            letter-spacing: 0.01em;
+        }
+        .card h3 {
+            margin: 14px 0 8px;
+            color: #2c3e50;
+            font-size: clamp(1rem, 1.8vw, 1.15rem);
+        }
+        .card p,
+        .card li {
+            margin: 6px 0 6px 14px;
+            color: var(--text2);
+            font-size: clamp(0.88rem, 1.5vw, 0.95rem);
+        }
+        .card ul,
+        .card ol {
+            margin: 6px 0 6px 8px;
+        }
+        .card li {
+            margin: 5px 0;
+        }
+
+        /* ── 網格佈局 ── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        /* ── 標籤 ── */
+        .tag {
+            display: inline-block;
+            background: #fff3e6;
+            color: #c75200;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            margin: 4px 5px;
+            font-weight: 600;
+            border: 1px solid #fcd5b5;
+            transition: var(--transition);
+            cursor: default;
+            white-space: nowrap;
+        }
+        .tag:hover {
+            background: #ffe4cc;
+            transform: translateY(-1px);
+        }
+        .tag.highlight {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ── 越位互動區 ── */
+        .offside-interactive {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .canvas-wrapper {
+            flex: 1 1 auto;
+            min-width: 300px;
+            max-width: 620px;
+            background: #fff;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--border);
+            position: relative;
+            cursor: grab;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .canvas-wrapper:active {
+            cursor: grabbing;
+        }
+        .canvas-wrapper.dragging {
+            cursor: grabbing;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            image-rendering: auto;
+        }
+        .offside-controls {
+            flex: 0 0 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .offside-status {
+            background: #f8fafb;
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 2px solid var(--border);
+            transition: var(--transition);
+        }
+        .offside-status.offside {
+            background: #ffeaea;
+            border-color: #e63946;
+            color: #c1121f;
+            animation: pulse 0.6s ease;
+        }
+        .offside-status.onside {
+            background: #eafaf1;
+            border-color: #2d6a4f;
+            color: #1b4332;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
+        }
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            font-family: var(--font);
+            transition: var(--transition);
+            text-align: center;
+            letter-spacing: 0.01em;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #d04a00;
+            box-shadow: 0 4px 12px rgba(232, 93, 4, 0.3);
+        }
+        .btn-outline {
+            background: #fff;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background: #f0f4ff;
+        }
+        .btn-sm {
+            padding: 7px 12px;
+            font-size: 0.78rem;
+            border-radius: 6px;
+        }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .legend-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.8rem;
+            align-items: center;
+            color: #555;
+        }
+        .legend-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+        .legend-dot.red {
+            background: #e63946;
+        }
+        .legend-dot.blue {
+            background: #1d3557;
+        }
+        .legend-dot.black {
+            background: #222;
+        }
+        .legend-dot.yellow {
+            background: #f4a261;
+            border: 1px dashed #c75200;
+        }
+
+        /* ── 陣型圖 ── */
+        .formation-pitch {
+            background: linear-gradient(180deg, #4a9c5d 0%, #3d8b50 30%, #357a45 60%, #3d8b50 100%);
+            border-radius: var(--radius-sm);
+            aspect-ratio: 3/4;
+            max-width: 280px;
+            margin: 10px auto;
+            position: relative;
+            border: 3px solid #fff;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .formation-pitch::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 24%,
+                    rgba(255, 255, 255, 0.06) 24%,
+                    rgba(255, 255, 255, 0.06) 25%);
+            pointer-events: none;
+        }
+        .formation-player {
+            position: absolute;
+            width: 10%;
+            aspect-ratio: 1;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transform: translate(-50%, -50%);
+            border: 2px solid #1d3557;
+        }
+        .formation-player.gk {
+            background: #ffd166;
+            border-color: #c75200;
+        }
+        .formation-label {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+            white-space: nowrap;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── 規則卡片高亮 ── */
+        .rule-highlight {
+            background: #fffdf5;
+            border-left: 4px solid #f4a261;
+            padding: 12px 16px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        /* ── 表格 ── */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            margin: 10px 0;
+        }
+        .info-table th,
+        .info-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        .info-table th {
+            background: #f8fafb;
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .info-table tr:hover td {
+            background: #fafcfd;
+        }
+
+        /* ── 響應式設計 ── */
+        @media (min-width: 769px) {
+            .top-nav {
+                display: block;
+            }
+            .bottom-nav {
+                display: none;
+            }
+            body {
+                padding-bottom: 24px;
+            }
+            .main-container {
+                padding: 24px 20px 8px;
+            }
+            .offside-interactive {
+                flex-wrap: nowrap;
+            }
+        }
+        @media (max-width: 768px) {
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .offside-interactive {
+                flex-direction: column;
+            }
+            .offside-controls {
+                flex: 0 0 auto;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .offside-controls>* {
+                flex: 1 1 auto;
+                min-width: 100px;
+            }
+            .formation-pitch {
+                max-width: 200px;
+            }
+            .card {
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            .btn {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+            .canvas-wrapper {
+                min-width: 100%;
+                max-width: 100%;
+            }
+            .legend-row {
+                font-size: 0.7rem;
+                gap: 6px;
+            }
+        }
+        @media (max-width: 400px) {
+            .bottom-nav-btn {
+                font-size: 0.65rem;
+                padding: 4px 5px;
+            }
+            .bottom-nav-btn .bn-icon {
+                font-size: 1.1rem;
+            }
+            .formation-pitch {
+                max-width: 150px;
+            }
+            .btn-row {
+                flex-direction: column;
+            }
+            .btn-row .btn {
+                width: 100%;
+            }
+        }
+        @media (min-width: 1400px) {
+            .main-container {
+                max-width: 1300px;
+            }
+            .grid-2 {
+                gap: 24px;
+            }
+            .card {
+                padding: 32px;
+            }
+        }
+
+        /* 列印優化 */
+        @media print {
+            .bottom-nav,
+            .top-nav,
+            .canvas-wrapper,
+            .btn {
+                display: none !important;
+            }
+            .page {
+                display: block !important;
+            }
+            body {
+                background: #fff;
+                padding: 0;
+            }
+            .card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
-<header>
-    <h1>世界盃足球專業觀賽知識手冊</h1>
-    <p>零基礎學賽制、規則、陣型｜附越位示意圖</p>
-</header>
-<div class="container">
 
-<!-- 模塊1：2026世界盃賽制 -->
-<section>
-    <h2>一、2026世界盃最新賽制</h2>
-    <h3>1. 小組賽（48隊，12組×4隊）</h3>
-    <ul>
-        <li>賽制：單循環，每隊踢3場</li>
-        <li>積分：勝3分｜和1分｜負0分</li>
-        <li>出線：小組前2名 + 8隊最佳第三，合共32隊入淘汰賽</li>
-        <li>排名順序：積分＞淨勝球＞總入球＞對賽成績＞公平競技</li>
-        <li>小組賽和波直接完場，無加時/十二碼</li>
-    </ul>
-    <h3>2. 淘汰賽（單場淘汰）</h3>
-    <p>1/16決賽 → 1/8 → 1/4 → 準決賽 → 季軍賽 → 決賽</p>
-    <ul>
-        <li>90分鐘+補時和波：30分鐘加時（上下半場各15分鐘）</li>
-        <li>加時仍和：十二碼大戰</li>
-    </ul>
-</section>
-
-<!-- 模塊2：越位規則+互動示意圖 -->
-<section>
-    <h2>二、重點規則：越位（附示意圖）</h2>
-    <div class="offside-box">
-        <div>
-            <canvas id="offsideCanvas" width="420" height="280"></canvas>
-            <p style="text-align:center;margin-top:8px;">藍：防守方｜紅：進攻方｜黑：皮球</p>
+    <!-- ═══════════ 頂部導航（桌面端） ═══════════ -->
+    <nav class="top-nav" id="topNav">
+        <div class="top-nav-inner">
+            <div class="logo">⚽ 世界盃<span>知識庫</span></div>
+            <button class="nav-tab active" data-page="page1"><span class="nav-icon">🏆</span>賽制</button>
+            <button class="nav-tab" data-page="page2"><span class="nav-icon">📐</span>越位互動</button>
+            <button class="nav-tab" data-page="page3"><span class="nav-icon">📋</span>規則大全</button>
+            <button class="nav-tab" data-page="page4"><span class="nav-icon">⚔️</span>陣型戰術</button>
+            <button class="nav-tab" data-page="page5"><span class="nav-icon">📖</span>術語技巧</button>
         </div>
-        <div class="canvas-desc">
-            <h3>越位成立條件（全部要滿足）</h3>
-            <ul>
-                <li>1. 進攻球員身處<b>對方半場</b></li>
-                <li>2. 傳球瞬間，球員比<b>對方倒數第二名球員+皮球</b>更貼近對方底線</li>
-                <li>門將計算為防守球員；界外球、後場回傳無越位</li>
-            </ul>
-            <p><span class="tag">左圖紅點：越位位置</span> <span class="tag">右側紅點：合法不越位</span></p>
+    </nav>
+
+    <!-- ═══════════ 底部導航（移動端） ═══════════ -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="bottom-nav-btn active" data-page="page1">
+            <span class="bn-icon">🏆</span>賽制
+        </button>
+        <button class="bottom-nav-btn" data-page="page2">
+            <span class="bn-icon">📐</span>越位
+        </button>
+        <button class="bottom-nav-btn" data-page="page3">
+            <span class="bn-icon">📋</span>規則
+        </button>
+        <button class="bottom-nav-btn" data-page="page4">
+            <span class="bn-icon">⚔️</span>陣型
+        </button>
+        <button class="bottom-nav-btn" data-page="page5">
+            <span class="bn-icon">📖</span>技巧
+        </button>
+    </nav>
+
+    <!-- ═══════════ 主內容區 ═══════════ -->
+    <div class="main-container" id="mainContainer">
+
+        <!-- ── 第1頁：賽制 ── -->
+        <div class="page active" id="page1">
+            <div class="card">
+                <h2>🏆 2026世界盃最新賽制</h2>
+                <p>2026年世界盃由<b>美國、加拿大、墨西哥</b>三國聯合主辦，參賽隊伍從32隊擴充至<b>48隊</b>，是史上規模最大的世界盃。</p>
+                <div class="rule-highlight">
+                    ⚡ 核心變化：48隊 → 12組 × 4隊 → 小組前2名 + 8隊最佳第三 → 32強淘汰賽
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📊 小組賽階段（48隊，12組×4隊）</h3>
+                <table class="info-table">
+                    <tr><th>項目</th><th>說明</th></tr>
+                    <tr><td>賽制</td><td>單循環，每隊踢<b>3場</b></td></tr>
+                    <tr><td>積分計算</td><td>勝 = <b>3分</b>｜和 = <b>1分</b>｜負 = <b>0分</b></td></tr>
+                    <tr><td>出線名額</td><td>小組<b>前2名</b>（24隊）+ <b>8隊最佳第三名</b> = 合共32隊</td></tr>
+                    <tr><td>排名順序</td><td>積分 ＞ 淨勝球 ＞ 總入球 ＞ 對賽成績 ＞ 公平競技分數 ＞ 抽籤</td></tr>
+                    <tr><td>和波處理</td><td>小組賽和波<b>直接完場</b>，無加時/十二碼</td></tr>
+                    <tr><td>公平競技分</td><td>黃牌-1分、兩黃變紅-3分、直接紅牌-4分、黃牌+直接紅牌-5分（分數越低排名越前）</td></tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>⚔️ 淘汰賽階段（單場淘汰制）</h3>
+                <p>1/16決賽 → 1/8決賽 → 1/4決賽 → 準決賽 → <b>季軍賽</b> → <b>決賽</b></p>
+                <table class="info-table">
+                    <tr><th>階段</th><th>場數</th><th>說明</th></tr>
+                    <tr><td>1/16決賽</td><td>16場</td><td>32強捉對廝殺，小組第一對陣小組第三/第二</td></tr>
+                    <tr><td>1/8決賽</td><td>8場</td><td>16強晉級</td></tr>
+                    <tr><td>1/4決賽</td><td>4場</td><td>8強爭奪準決賽席位</td></tr>
+                    <tr><td>準決賽</td><td>2場</td><td>4強爭入決賽</td></tr>
+                    <tr><td>季軍賽</td><td>1場</td><td>準決賽負方對決</td></tr>
+                    <tr><td><b>決賽</b></td><td><b>1場</b></td><td><b>爭奪世界盃冠軍🏆</b></td></tr>
+                </table>
+                <div class="rule-highlight" style="margin-top:12px;">
+                    ⏱ 淘汰賽和波規則：90分鐘+補時和波 → <b>30分鐘加時</b>（上下半場各15分鐘）→ 仍和波 → <b>十二碼大戰</b>（5輪→突然死亡）
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📅 2026世界盃關鍵時間節點</h3>
+                <ul>
+                    <li>📅 開幕戰：<b>2026年6月11日</b>（墨西哥城阿茲特克球場）</li>
+                    <li>📅 小組賽：6月11日 - 6月27日</li>
+                    <li>📅 1/16決賽：6月28日 - 7月3日</li>
+                    <li>📅 決賽：<b>2026年7月19日</b>（新澤西州大都會人壽球場）</li>
+                    <li>📍 比賽城市：16個（美國11個、加拿大2個、墨西哥3個）</li>
+                    <li>🏟 總場數：<b>104場</b>（比2022年多40場）</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ── 第2頁：越位互動 ── -->
+        <div class="page" id="page2">
+            <div class="card">
+                <h2>📐 越位規則 — 互動示意圖</h2>
+                <p style="margin-bottom:4px;">🖱 <b>拖動</b>下方球場中的球員與皮球，系統會<b>即時判斷</b>是否越位！</p>
+                <p style="font-size:0.82rem;color:#888;">支援滑鼠拖拽（桌面端）及觸控拖拽（手機/平板）｜拖動紅色進攻球員、藍色防守球員、或黑色皮球</p>
+            </div>
+
+            <div class="offside-interactive">
+                <!-- Canvas互動區 -->
+                <div class="canvas-wrapper" id="canvasWrapper">
+                    <canvas id="offsideCanvas"></canvas>
+                </div>
+
+                <!-- 控制面板 -->
+                <div class="offside-controls">
+                    <div class="offside-status onside" id="offsideStatus">
+                        ✅ <span id="offsideStatusText">不越位 — 合法進攻</span>
+                    </div>
+                    <div class="legend-row">
+                        <span><span class="legend-dot red"></span>進攻球員</span>
+                        <span><span class="legend-dot blue"></span>防守球員</span>
+                        <span><span class="legend-dot black"></span>皮球</span>
+                        <span><span class="legend-dot yellow"></span>越位線</span>
+                    </div>
+                    <p style="font-size:0.75rem;color:#888;margin:2px 0;">拖動圓點改變位置，即時判斷越位</p>
+                    <div class="btn-row">
+                        <button class="btn btn-outline btn-sm" id="btnPresetOffside">🚫 越位示例</button>
+                        <button class="btn btn-outline btn-sm" id="btnPresetOnside">✅ 合法示例</button>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn btn-outline btn-sm" id="btnPresetEdge">⚡ 邊緣情況</button>
+                        <button class="btn btn-outline btn-sm" id="btnReset">🔄 重置位置</button>
+                    </div>
+                    <div class="rule-highlight" style="font-size:0.8rem;margin-top:4px;">
+                        <b>越位三條件（全部滿足）：</b><br>
+                        ① 在<b>對方半場</b><br>
+                        ② 比<b>倒數第二名防守球員</b>更近底線<br>
+                        ③ 比<b>皮球</b>更近底線
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+                <h3>📖 越位規則補充說明</h3>
+                <ul>
+                    <li><b>門將計算在內</b>：門將是防守球員之一，通常是最後一名；越位線由<b>倒數第二名防守球員</b>決定</li>
+                    <li><b>界外球無越位</b>：擲界外球時，接球隊友即使處於越位位置也不算犯規</li>
+                    <li><b>後場回傳無越位</b>：球員在<b>自己半場</b>接球，不存在越位</li>
+                    <li><b>角球無越位</b>：角球直接傳球不構成越位</li>
+                    <li><b>球門球無越位</b>：球門球開出時不計算越位</li>
+                    <li><b>「參與進攻」才算</b>：僅處於越位位置但不參與進攻/不影響比賽，裁判可不吹罰</li>
+                    <li><b>VAR覆核</b>：所有入球都會經VAR檢查越位，精準至毫米級</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ── 第3頁：規則大全 ── -->
+        <div class="page" id="page3">
+            <div class="card">
+                <h2>📋 足球規則全面解析</h2>
+                <p>以下涵蓋世界盃賽事中最關鍵的規則，幫助你從零基礎進階為專業觀眾。</p>
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>🟨 黃牌與紅牌</h3>
+                    <ul>
+                        <li><b>黃牌（警告）</b>：犯規、拖延時間、不君子行為、未獲准入場、重複犯規</li>
+                        <li><b>兩黃變一紅</b>：同一場累積2張黃牌 = 紅牌離場</li>
+                        <li><b>直接紅牌</b>：嚴重犯規、暴力行為、蓄意手球阻止入球、辱罵裁判</li>
+                        <li>紅牌 = <b>即時離場</b>，球隊少打一人，且<b>下場停賽</b></li>
+                        <li>淘汰賽黃牌在準決賽前<b>清零</b>（確保決賽可上陣）</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🎯 十二碼（點球）</h3>
+                    <ul>
+                        <li>防守方在<b>禁區內</b>犯規或手球 → 判十二碼</li>
+                        <li>球放於<b>12碼點</b>（距球門11米）</li>
+                        <li>只有<b>門將</b>和<b>主射球員</b>可進入禁區</li>
+                        <li>門將須站在<b>白線之上</b>，射門前不可向前移動</li>
+                        <li>十二碼大戰：5輪制，平手則進入<b>突然死亡</b></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📡 VAR（影像輔助裁判）</h3>
+                    <ul>
+                        <li><b>4類可覆核</b>：入球/越位、十二碼判決、直接紅牌、錯誤身份</li>
+                        <li>VAR團隊在<b>影像控制室</b>遠程協助主裁判</li>
+                        <li>主裁判可選擇<b>場邊屏幕</b>親自觀看重播</li>
+                        <li>2026世界盃將使用<b>半自動越位系統</b>（AI+骨骼追蹤）</li>
+                        <li>球迷可通過轉播看到VAR覆核過程</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>⏱ 補時與加時</h3>
+                    <ul>
+                        <li><b>傷停補時</b>：每半場結束前，補償受傷/換人/VAR等延誤</li>
+                        <li>2022世界盃起採用<b>超長補時</b>（補時可達8-15分鐘）</li>
+                        <li><b>加時賽</b>：淘汰賽和波後30分鐘（上下半場各15分鐘）</li>
+                        <li>加時賽<b>不設「黃金入球」</b>（即不採用突然死亡法）</li>
+                        <li>加時賽每隊可多換<b>1人</b>（共6個換人名額）</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <h3>🔄 換人規則（2026更新）</h3>
+                <ul>
+                    <li>每場最多<b>5個換人名額</b>（3次換人時機 + 中場休息）</li>
+                    <li>加時賽額外<b>+1個</b>換人名額及額外1次換人時機</li>
+                    <li><b>腦震盪替補</b>：若球員疑似腦震盪，可使用額外替補名額</li>
+                    <li>被換走的球員<b>不可</b>再次上陣</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ── 第4頁：陣型戰術 ── -->
+        <div class="page" id="page4">
+            <div class="card">
+                <h2>⚔️ 常用陣型與戰術體系</h2>
+                <p>點擊下方按鈕切換陣型圖，了解不同陣型的站位與戰術意圖。</p>
+            </div>
+            <div class="btn-row" style="margin-bottom:14px;justify-content:center;flex-wrap:wrap;" id="formationBtns">
+                <button class="btn btn-outline btn-sm active" data-formation="4231">4-2-3-1 主流</button>
+                <button class="btn btn-outline btn-sm" data-formation="433">4-3-3 進攻</button>
+                <button class="btn btn-outline btn-sm" data-formation="352">3-5-2 控球</button>
+                <button class="btn btn-outline btn-sm" data-formation="541">5-4-1 防反</button>
+                <button class="btn btn-outline btn-sm" data-formation="442">4-4-2 經典</button>
+            </div>
+            <div class="grid-2">
+                <div class="card" style="display:flex;flex-direction:column;align-items:center;">
+                    <div class="formation-pitch" id="formationPitch">
+                        <div class="formation-label" id="formationLabel">4-2-3-1</div>
+                    </div>
+                    <p style="text-align:center;font-size:0.8rem;color:#888;margin-top:6px;">⬆ 進攻方向</p>
+                </div>
+                <div class="card" id="formationDesc">
+                    <h3 id="formationName">4-2-3-1 陣型</h3>
+                    <p id="formationDetail"><b>攻守最平衡的陣型</b>，世界盃最主流。雙後腰提供防守屏障，前腰串聯中前場，兩翼拉開寬度，單前鋒突前。適合控球與快速轉換。</p>
+                    <ul id="formationPros">
+                        <li>✅ 中路防守穩固（雙後腰）</li>
+                        <li>✅ 邊中結合靈活</li>
+                        <li>✅ 適合高位逼搶</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <h3>📊 各位置職責速查</h3>
+                <table class="info-table">
+                    <tr><th>位置</th><th>英文</th><th>主要職責</th></tr>
+                    <tr><td>門將</td><td>GK</td><td>守門、指揮防線、出球</td></tr>
+                    <tr><td>中堅</td><td>CB</td><td>防空、攔截、一對一防守</td></tr>
+                    <tr><td>閘位</td><td>FB/LB/RB</td><td>邊路防守、疊瓦助攻</td></tr>
+                    <tr><td>防守中場（後腰）</td><td>CDM</td><td>中場掃蕩、分波、保護防線</td></tr>
+                    <tr><td>中場中</td><td>CM</td><td>控球、串聯、遠射</td></tr>
+                    <tr><td>進攻中場（前腰）</td><td>CAM</td><td>創造機會、突破、後上入球</td></tr>
+                    <tr><td>翼鋒</td><td>LW/RW</td><td>邊路突破、傳中、內切射門</td></tr>
+                    <tr><td>前鋒（中鋒）</td><td>ST/CF</td><td>入球、搶點、做樁牽制</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── 第5頁：術語與技巧 ── -->
+        <div class="page" id="page5">
+            <div class="card">
+                <h2>📖 解說常用術語大全</h2>
+                <div>
+                    <span class="tag highlight">梅開二度</span><span class="tag">帽子戲法</span>
+                    <span class="tag">大四喜</span><span class="tag">烏龍球</span>
+                    <span class="tag">世界波</span><span class="tag">高位逼搶</span>
+                    <span class="tag">淨勝球</span><span class="tag">對賽成績</span>
+                    <span class="tag">控球率</span><span class="tag">射正</span>
+                    <span class="tag">絕殺</span><span class="tag">反越位</span>
+                    <span class="tag">疊瓦</span><span class="tag">撞牆</span>
+                    <span class="tag">笠射</span><span class="tag">倒掛</span>
+                </div>
+                <table class="info-table" style="margin-top:14px;">
+                    <tr><th>術語</th><th>含義</th></tr>
+                    <tr><td>梅開二度</td><td>同一球員單場攻入<b>2球</b></td></tr>
+                    <tr><td>帽子戲法</td><td>同一球員單場攻入<b>3球</b>（完美帽子戲法=左腳+右腳+頭槌各一）</td></tr>
+                    <tr><td>大四喜</td><td>同一球員單場攻入<b>4球</b></td></tr>
+                    <tr><td>烏龍球</td><td>誤將球踢入<b>自家龍門</b></td></tr>
+                    <tr><td>世界波</td><td>極其精彩的<b>遠射入球</b>（通常30碼外）</td></tr>
+                    <tr><td>高位逼搶</td><td>全隊壓至前場<b>主動搶波</b>，不讓對方輕鬆組織</td></tr>
+                    <tr><td>淨勝球</td><td>總入球 − 總失球（同分時排名的關鍵指標）</td></tr>
+                    <tr><td>絕殺</td><td>比賽<b>最後時刻</b>（尤其是補時階段）的致勝入球</td></tr>
+                    <tr><td>反越位</td><td>進攻球員刻意留在防守球員後面，待傳球瞬間才衝前接球</td></tr>
+                    <tr><td>疊瓦</td><td>邊後衛<b>從後方跑上前</b>參與進攻，與翼鋒形成2打1</td></tr>
+                    <tr><td>撞牆</td><td>兩名球員之間的<b>快速短傳配合</b>，像球撞牆反彈</td></tr>
+                    <tr><td>笠射</td><td>將球<b>挑高</b>越過門將頭頂入網</td></tr>
+                </table>
+            </div>
+            <div class="card">
+                <h2>🎯 提升觀賽眼光的實戰方法</h2>
+                <ol>
+                    <li><b>固定追2-3隊</b>：熟記正選陣容、常用陣型、核心球員位置與習慣</li>
+                    <li><b>賽後睇數據</b>：控球率、射正次數、傳球成功率、xG（預期入球值）、跑動距離</li>
+                    <li><b>觀察換人邏輯</b>：落後時換前鋒/翼鋒加強攻勢；領先時換後腰/中堅鞏固防守</li>
+                    <li><b>留意無球跑動</b>：不只是看持球者，更要看隊友如何拉空位、牽制後衛</li>
+                    <li><b>分析防守結構</b>：觀察防守線的高度、越位陷阱的執行、中場逼搶的協調</li>
+                    <li><b>觀看重播與分析節目</b>：賽後專家分析能幫助理解戰術細節</li>
+                    <li><b>使用戰術App</b>：如SofaScore、FotMob等提供即時熱力圖與球員評分</li>
+                </ol>
+            </div>
+            <div class="card">
+                <h3>📺 推薦觀賽資源</h3>
+                <ul>
+                    <li>📱 <b>SofaScore / FotMob</b>：即時比分、數據統計、球員評分</li>
+                    <li>📊 <b>FBref / Transfermarkt</b>：深入數據與球員身價</li>
+                    <li>🎥 <b>YouTube戰術分析頻道</b>：Tifo Football、The Coaches' Voice</li>
+                    <li>📖 <b>《倒轉金字塔》</b>：足球戰術史經典書籍</li>
+                </ul>
+            </div>
         </div>
     </div>
-    <h3>其他核心規則</h3>
-    <ul>
-        <li>黃牌：警告；兩黃變紅直接離場，球隊少打一人</li>
-        <li>十二碼：禁區內防守犯規/手球，單對一門將射門</li>
-        <li>VAR：回看越位、十二碼、入球、紅牌爭議判決</li>
-    </ul>
-</section>
 
-<!-- 模塊3：陣型與位置 -->
-<section class="grid">
-    <div>
-        <h2>三、常用場上陣型</h2>
-        <ul>
-            <li><b>4-2-3-1</b>：攻守平衡，世界盃主流</li>
-            <li><b>4-3-3</b>：主攻邊路、高位搶逼</li>
-            <li><b>5-4-1</b>：防反專用，縮後場抓反擊</li>
-            <li><b>3-5-2</b>：翼衛上下走動，主打控球</li>
-        </ul>
-    </div>
-    <div>
-        <h2>關鍵位置解釋</h2>
-        <ul>
-            <li>後腰：中場防線、負責分波</li>
-            <li>邊鋒：邊路突破、傳中/內切射門</li>
-            <li>中鋒：禁區搶點、做樁牽制後衛</li>
-        </ul>
-    </div>
-</section>
+    <script>
+        (function() {
+            // ═══════════════ Tab 切換邏輯 ═══════════════
+            const pages = document.querySelectorAll('.page');
+            const topNavTabs = document.querySelectorAll('.nav-tab');
+            const bottomNavBtns = document.querySelectorAll('.bottom-nav-btn');
+            let currentPage = 'page1';
 
-<!-- 模塊4：觀賽術語 -->
-<section>
-    <h2>四、解說常用術語</h2>
-    <div>
-        <span class="tag">梅開二度=單場2球</span>
-        <span class="tag">帽子戲法=單場3球</span>
-        <span class="tag">大四喜=4球</span>
-        <span class="tag">烏龍=入自家龍門</span>
-        <span class="tag">世界波=遠射靚波</span>
-        <span class="tag">高位逼搶=全隊壓前搶波</span>
-        <span class="tag">淨勝球=總入球-總失球</span>
-    </div>
-</section>
+            function switchPage(pageId) {
+                if (currentPage === pageId) return;
+                currentPage = pageId;
+                // 隱藏所有頁面
+                pages.forEach(p => p.classList.remove('active'));
+                // 顯示目標頁面
+                const target = document.getElementById(pageId);
+                if (target) target.classList.add('active');
+                // 更新導航狀態
+                topNavTabs.forEach(t => t.classList.toggle('active', t.dataset.page === pageId));
+                bottomNavBtns.forEach(b => b.classList.toggle('active', b.dataset.page === pageId));
+                // 如果切換到越位頁面，重繪Canvas
+                if (pageId === 'page2') {
+                    setTimeout(resizeCanvas, 150);
+                }
+                // 滾動到頂部
+                document.getElementById('mainContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
 
-<!-- 模塊5：提升觀賽眼光方法 -->
-<section>
-    <h2>五、練習變專業球迷</h2>
-    <ol>
-        <li>固定追2隊，熟記首發陣容同位置</li>
-        <li>賽後睇數據：控球率、射正次數、傳球成功率</li>
-        <li>觀察換人邏輯：落後換前鋒、領先換後腰</li>
-    </ol>
-</section>
+            topNavTabs.forEach(tab => {
+                tab.addEventListener('click', () => switchPage(tab.dataset.page));
+            });
+            bottomNavBtns.forEach(btn => {
+                btn.addEventListener('click', () => switchPage(btn.dataset.page));
+            });
 
-</div>
+            // ═══════════════ 越位互動Canvas ═══════════════
+            const canvas = document.getElementById('offsideCanvas');
+            const ctx = canvas.getContext('2d');
+            const canvasWrapper = document.getElementById('canvasWrapper');
+            const offsideStatus = document.getElementById('offsideStatus');
+            const offsideStatusText = document.getElementById('offsideStatusText');
 
-<script>
-// JS繪製越位示意圖
-const canvas = document.getElementById('offsideCanvas');
-const ctx = canvas.getContext('2d');
-// 場地線
-ctx.fillStyle='#e8f0fe';
-ctx.fillRect(0,0,420,280);
-ctx.strokeStyle='#08306b';
-ctx.lineWidth=2;
-// 中場線
-ctx.beginPath();ctx.moveTo(210,0);ctx.lineTo(210,280);ctx.stroke();
-// 底線禁區示意
-ctx.strokeRect(360,60,60,160);
-// 防守球員(藍圓)
-ctx.fillStyle='#08306b';
-function drawCircle(x,y,r){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
-drawCircle(300,80,12);
-drawCircle(300,140,12); //倒數第二個防守球員
-drawCircle(300,200,12);
-// 皮球
-ctx.fillStyle='#222';
-drawCircle(330,140,8);
-// 越位紅點（皮球+倒數後衛前面）
-ctx.fillStyle='#e63946';
-drawCircle(350,140,12);
-// 合法位置紅點（後衛後面）
-drawCircle(260,140,12);
-// 標註文字
-ctx.fillStyle='#000';
-ctx.font='13px JhengHei';
-ctx.fillText('越位(紅)',355,125);
-ctx.fillText('合法(紅)',230,125);
-ctx.fillText('倒數第2後衛',265,155);
-</script>
+            // 邏輯座標系（設計基準 620×380）
+            const LOGICAL_W = 620;
+            const LOGICAL_H = 380;
+            // 中場線x座標（進攻方半場左邊界）
+            const HALFWAY_X = 60;
+            // 底線x座標（防守方球門）
+            const ENDLINE_X = LOGICAL_W - 30;
+            // 球門區域
+            const GOAL_X = ENDLINE_X;
+            const GOAL_Y_TOP = LOGICAL_H * 0.28;
+            const GOAL_Y_BOT = LOGICAL_H * 0.72;
+
+            // 可拖動元素
+            let draggables = [];
+            let draggingIndex = -1;
+            let dragOffsetX = 0;
+            let dragOffsetY = 0;
+            let scaleRatio = 1; // canvas邏輯像素與CSS顯示的比例
+
+            // 初始化球員位置（邏輯座標）
+            function initPositions() {
+                draggables = [
+                    { id: 'attacker', x: 370, y: 170, r: 18, color: '#e63946',
+                        stroke: '#fff', label: '進攻球員', type: 'attacker' },
+                    { id: 'defender', x: 320, y: 200, r: 18, color: '#1d3557',
+                    stroke: '#fff', label: '防守球員(倒數第二)', type: 'defender' },
+                    { id: 'goalkeeper', x: 540, y: 190, r: 20, color: '#ffd166',
+                        stroke: '#1d3557', label: '門將', type: 'goalkeeper', fixed: true },
+                    { id: 'ball', x: 350, y: 240, r: 10, color: '#1a1a1a',
+                        stroke: '#fff', label: '皮球', type: 'ball' },
+                ];
+            }
+            initPositions();
+
+            // 獲取越位線位置（倒數第二名防守球員的x座標）
+            function getOffsideLine() {
+                const defenders = draggables.filter(d => d.type === 'defender' || d.type === 'goalkeeper');
+                // 按x座標排序（從大到小 = 從靠近底線到遠離底線）
+                const sorted = [...defenders].sort((a, b) => b.x - a.x);
+                if (sorted.length >= 2) {
+                    return sorted[1].x; // 倒數第二名
+                }
+                return sorted[0]?.x || ENDLINE_X - 80;
+            }
+
+            // 判斷越位
+            function checkOffside() {
+                const attacker = draggables.find(d => d.type === 'attacker');
+                const ball = draggables.find(d => d.type === 'ball');
+                if (!attacker || !ball) return false;
+                const offsideLine = getOffsideLine();
+                // 條件：進攻球員在對方半場、比倒數第二防守球員更近底線、比球更近底線
+                const inOpponentHalf = attacker.x > HALFWAY_X;
+                const beyondDefender = attacker.x > offsideLine;
+                const beyondBall = attacker.x > ball.x;
+                return inOpponentHalf && beyondDefender && beyondBall;
+            }
+
+            // 繪製Canvas
+            function drawCanvas() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const cssWidth = canvas.clientWidth;
+                const cssHeight = canvas.clientHeight;
+                if (cssWidth <= 0) return;
+
+                // 設定Canvas實際像素（高清）
+                const pixelW = Math.floor(cssWidth * dpr);
+                const pixelH = Math.floor(cssHeight * dpr);
+                if (canvas.width !== pixelW || canvas.height !== pixelH) {
+                    canvas.width = pixelW;
+                    canvas.height = pixelH;
+                }
+                scaleRatio = cssWidth / LOGICAL_W;
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.scale(dpr * scaleRatio, dpr * scaleRatio);
+
+                // 背景草地（漸變）
+                const grassGrad = ctx.createLinearGradient(0, 0, 0, LOGICAL_H);
+                grassGrad.addColorStop(0, '#5aad6f');
+                grassGrad.addColorStop(0.3, '#4d9e5e');
+                grassGrad.addColorStop(0.5, '#3f8f4d');
+                grassGrad.addColorStop(0.7, '#4d9e5e');
+                grassGrad.addColorStop(1, '#5aad6f');
+                ctx.fillStyle = grassGrad;
+                ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+                // 草地紋理
+                ctx.fillStyle = 'rgba(255,255,255,0.03)';
+                for (let i = 0; i < LOGICAL_W; i += 14) {
+                    for (let j = 0; j < LOGICAL_H; j += 18) {
+                        if (Math.random() < 0.35) {
+                            ctx.fillRect(i, j, 8, 1.5);
+                        }
+                    }
+                }
+
+                // 中場線
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(HALFWAY_X, 0);
+                ctx.lineTo(HALFWAY_X, LOGICAL_H);
+                ctx.stroke();
+
+                // 中圈弧（部分）
+                ctx.beginPath();
+                ctx.arc(HALFWAY_X, LOGICAL_H / 2, 55, -Math.PI / 2, Math.PI / 2);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // 底線
+                ctx.beginPath();
+                ctx.moveTo(ENDLINE_X, 0);
+                ctx.lineTo(ENDLINE_X, LOGICAL_H);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // 禁區
+                const penAreaX = ENDLINE_X - 90;
+                const penAreaTop = GOAL_Y_TOP - 50;
+                const penAreaBottom = GOAL_Y_BOT + 50;
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.5;
+                ctx.strokeRect(penAreaX, penAreaTop, 90, penAreaBottom - penAreaTop);
+
+                // 小禁區
+                const smallAreaX = ENDLINE_X - 35;
+                const smallAreaTop = GOAL_Y_TOP - 20;
+                const smallAreaBottom = GOAL_Y_BOT + 20;
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 4]);
+                ctx.strokeRect(smallAreaX, smallAreaTop, 35, smallAreaBottom - smallAreaTop);
+                ctx.setLineDash([]);
+
+                // 球門標記
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.fillRect(ENDLINE_X - 3, GOAL_Y_TOP, 6, GOAL_Y_BOT - GOAL_Y_TOP);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(ENDLINE_X - 3, GOAL_Y_TOP, 6, GOAL_Y_BOT - GOAL_Y_TOP);
+
+                // 十二碼點
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(ENDLINE_X - 65, LOGICAL_H / 2, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // ── 越位線（倒數第二名防守球員位置） ──
+                const offsideLineX = getOffsideLine();
+                const isOffside = checkOffside();
+
+                // 越位線虛線
+                ctx.setLineDash([10, 8]);
+                ctx.strokeStyle = isOffside ? '#e63946' : '#f4a261';
+                ctx.lineWidth = 2.8;
+                ctx.beginPath();
+                ctx.moveTo(offsideLineX, 10);
+                ctx.lineTo(offsideLineX, LOGICAL_H - 10);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 越位線標籤
+                ctx.fillStyle = isOffside ? '#e63946' : '#c75200';
+                ctx.font = 'bold 13px "Microsoft JhengHei","PingFang HK",sans-serif';
+                ctx.fillText('越位線', offsideLineX + 6, 28);
+
+                // 越位區域陰影（進攻球員超過越位線且超過球時高亮）
+                if (isOffside) {
+                    const attackerX = draggables.find(d => d.type === 'attacker')?.x || 0;
+                    const ballX = draggables.find(d => d.type === 'ball')?.x || 0;
+                    const highlightStart = Math.max(offsideLineX, ballX);
+                    ctx.fillStyle = 'rgba(230,57,70,0.18)';
+                    ctx.fillRect(highlightStart, 0, ENDLINE_X - highlightStart, LOGICAL_H);
+                    // 邊界閃爍線
+                    ctx.strokeStyle = 'rgba(230,57,70,0.6)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(highlightStart, 0);
+                    ctx.lineTo(highlightStart, LOGICAL_H);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // ── 繪製可拖動元素 ──
+                draggables.forEach((d, index) => {
+                    // 陰影
+                    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+                    ctx.beginPath();
+                    ctx.arc(d.x + 2, d.y + 3, d.r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 主體
+                    const grad = ctx.createRadialGradient(d.x - d.r * 0.25, d.y - d.r * 0.3, d.r * 0.1, d.x, d.y,
+                        d.r);
+                    if (d.type === 'goalkeeper') {
+                        grad.addColorStop(0, '#ffe88c');
+                        grad.addColorStop(0.7, '#f0c040');
+                        grad.addColorStop(1, '#c08020');
+                    } else if (d.type === 'attacker') {
+                        grad.addColorStop(0, '#ff6b6b');
+                        grad.addColorStop(0.7, '#d63031');
+                        grad.addColorStop(1, '#a01020');
+                    } else if (d.type === 'defender') {
+                        grad.addColorStop(0, '#5a7fba');
+                        grad.addColorStop(0.7, '#2c4a7c');
+                        grad.addColorStop(1, '#0f2444');
+                    } else {
+                        grad.addColorStop(0, '#555');
+                        grad.addColorStop(0.7, '#1a1a1a');
+                        grad.addColorStop(1, '#000');
+                    }
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 邊框
+                    ctx.strokeStyle = d.stroke || '#fff';
+                    ctx.lineWidth = d.type === 'ball' ? 2 : 2.5;
+                    ctx.stroke();
+
+                    // 高亮光點
+                    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                    ctx.beginPath();
+                    ctx.arc(d.x - d.r * 0.3, d.y - d.r * 0.35, d.r * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 拖動提示（小箭頭）
+                    if (draggingIndex === index) {
+                        ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+                        ctx.lineWidth = 3;
+                        ctx.setLineDash([3, 3]);
+                        ctx.beginPath();
+                        ctx.arc(d.x, d.y, d.r + 6, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+
+                    // 標籤（非門將和非球）
+                    if (d.type !== 'goalkeeper' && d.type !== 'ball') {
+                        ctx.fillStyle = '#fff';
+                        ctx.font = 'bold 10px "Microsoft JhengHei","PingFang HK",sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(d.label, d.x, d.y - d.r - 10);
+                        ctx.textAlign = 'start';
+                    }
+                    if (d.type === 'ball') {
+                        ctx.fillStyle = '#fff';
+                        ctx.font = 'bold 10px "Microsoft JhengHei","PingFang HK",sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('⚽', d.x, d.y - d.r - 10);
+                        ctx.textAlign = 'start';
+                    }
+                });
+
+                // ── 圖例箭頭（進攻方向） ──
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.font = 'bold 12px "Microsoft JhengHei","PingFang HK",sans-serif';
+                ctx.fillText('⬅ 進攻方向', LOGICAL_W - 140, LOGICAL_H - 12);
+                ctx.fillText('中場線', HALFWAY_X + 8, LOGICAL_H - 12);
+
+                // 更新狀態面板
+                updateStatusPanel(isOffside);
+            }
+
+            function updateStatusPanel(isOffside) {
+                if (isOffside) {
+                    offsideStatus.className = 'offside-status offside';
+                    offsideStatusText.textContent = '🚫 越位！進攻球員超越越位線且在球前方';
+                } else {
+                    offsideStatus.className = 'offside-status onside';
+                    const attacker = draggables.find(d => d.type === 'attacker');
+                    const offsideLine = getOffsideLine();
+                    if (!attacker) {
+                        offsideStatusText.textContent = '✅ 不越位 — 合法進攻';
+                    } else if (attacker.x <= HALFWAY_X) {
+                        offsideStatusText.textContent = '✅ 不越位 — 進攻球員在本方半場';
+                    } else if (attacker.x <= offsideLine) {
+                        offsideStatusText.textContent = '✅ 不越位 — 進攻球員在越位線後方';
+                    } else {
+                        const ball = draggables.find(d => d.type === 'ball');
+                        if (ball && attacker.x <= ball.x) {
+                            offsideStatusText.textContent = '✅ 不越位 — 皮球在進攻球員前方（回傳）';
+                        } else {
+                            offsideStatusText.textContent = '✅ 不越位 — 合法進攻';
+                        }
+                    }
+                }
+            }
+
+            // ── 尋找點擊的元素 ──
+            function findDraggable(logX, logY) {
+                for (let i = draggables.length - 1; i >= 0; i--) {
+                    const d = draggables[i];
+                    if (d.fixed) continue; // 固定元素不可拖動
+                    const dx = logX - d.x;
+                    const dy = logY - d.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist <= d.r + 8) return i; // 8px容錯
+                }
+                return -1;
+            }
+
+            // ── 將事件座標轉為邏輯座標 ──
+            function eventToLogical(e) {
+                const rect = canvas.getBoundingClientRect();
+                const cssX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const cssY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+                const logX = cssX / scaleRatio;
+                const logY = cssY / scaleRatio;
+                return { logX, logY };
+            }
+
+            // ── 約束位置在場內 ──
+            function clampPosition(d, logX, logY) {
+                const margin = d.r + 4;
+                let cx = Math.max(margin, Math.min(LOGICAL_W - margin, logX));
+                let cy = Math.max(margin, Math.min(LOGICAL_H - margin, logY));
+                // 門將固定在球門附近
+                if (d.type === 'goalkeeper') {
+                    cx = Math.max(ENDLINE_X - 60, Math.min(ENDLINE_X - 8, cx));
+                    cy = Math.max(GOAL_Y_TOP - 15, Math.min(GOAL_Y_BOT + 15, cy));
+                }
+                return { cx, cy };
+            }
+
+            // ── 事件處理 ──
+            function onPointerDown(e) {
+                e.preventDefault();
+                const { logX, logY } = eventToLogical(e);
+                const idx = findDraggable(logX, logY);
+                if (idx >= 0) {
+                    draggingIndex = idx;
+                    dragOffsetX = draggables[idx].x - logX;
+                    dragOffsetY = draggables[idx].y - logY;
+                    canvasWrapper.classList.add('dragging');
+                    drawCanvas();
+                }
+            }
+
+            function onPointerMove(e) {
+                if (draggingIndex < 0) return;
+                e.preventDefault();
+                const { logX, logY } = eventToLogical(e);
+                const d = draggables[draggingIndex];
+                const { cx, cy } = clampPosition(d, logX + dragOffsetX, logY + dragOffsetY);
+                d.x = cx;
+                d.y = cy;
+                drawCanvas();
+            }
+
+            function onPointerUp(e) {
+                if (draggingIndex >= 0) {
+                    draggingIndex = -1;
+                    canvasWrapper.classList.remove('dragging');
+                    drawCanvas();
+                }
+            }
+
+            // 綁定事件
+            canvas.addEventListener('mousedown', onPointerDown);
+            canvas.addEventListener('mousemove', onPointerMove);
+            canvas.addEventListener('mouseup', onPointerUp);
+            canvas.addEventListener('mouseleave', onPointerUp);
+            canvas.addEventListener('touchstart', onPointerDown, { passive: false });
+            canvas.addEventListener('touchmove', onPointerMove, { passive: false });
+            canvas.addEventListener('touchend', onPointerUp);
+            canvas.addEventListener('touchcancel', onPointerUp);
+
+            // ── 調整Canvas大小 ──
+            function resizeCanvas() {
+                const wrapperWidth = canvasWrapper.clientWidth;
+                // 在移動端全寬，桌面端最大620px
+                const targetWidth = Math.min(wrapperWidth, 620);
+                canvas.style.width = targetWidth + 'px';
+                canvas.style.height = (targetWidth * (LOGICAL_H / LOGICAL_W)) + 'px';
+                drawCanvas();
+            }
+
+            // ── 預設場景按鈕 ──
+            function setPreset(attackerX, attackerY, defenderX, defenderY, ballX, ballY) {
+                const atk = draggables.find(d => d.type === 'attacker');
+                const def = draggables.find(d => d.type === 'defender');
+                const ball = draggables.find(d => d.type === 'ball');
+                const gk = draggables.find(d => d.type === 'goalkeeper');
+                if (atk) { atk.x = attackerX;
+                    atk.y = attackerY; }
+                if (def) { def.x = defenderX;
+                    def.y = defenderY; }
+                if (ball) { ball.x = ballX;
+                    ball.y = ballY; }
+                if (gk) { gk.x = 540;
+                    gk.y = 190; }
+                drawCanvas();
+            }
+
+            document.getElementById('btnPresetOffside').addEventListener('click', () => {
+                setPreset(420, 160, 320, 200, 360, 240);
+            });
+            document.getElementById('btnPresetOnside').addEventListener('click', () => {
+                setPreset(280, 160, 340, 200, 360, 240);
+            });
+            document.getElementById('btnPresetEdge').addEventListener('click', () => {
+                setPreset(338, 165, 330, 200, 345, 235);
+            });
+            document.getElementById('btnReset').addEventListener('click', () => {
+                initPositions();
+                drawCanvas();
+            });
+
+            // ── 初始化 ──
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
+            // 初始渲染
+            setTimeout(resizeCanvas, 200);
+
+            // 監聽頁面切換以重繪
+            const observer = new MutationObserver(() => {
+                if (document.getElementById('page2').classList.contains('active')) {
+                    setTimeout(resizeCanvas, 100);
+                }
+            });
+            document.getElementById('page2').addEventListener('transitionend', () => {
+                setTimeout(resizeCanvas, 100);
+            });
+
+            // ═══════════════ 陣型圖切換 ═══════════════
+            const formationPitch = document.getElementById('formationPitch');
+            const formationLabel = document.getElementById('formationLabel');
+            const formationNameEl = document.getElementById('formationName');
+            const formationDetailEl = document.getElementById('formationDetail');
+            const formationProsEl = document.getElementById('formationPros');
+            const formationBtns = document.querySelectorAll('#formationBtns .btn');
+
+            const formationData = {
+                '4231': {
+                    name: '4-2-3-1 陣型',
+                    detail: '<b>攻守最平衡的陣型</b>，世界盃最主流。雙後腰提供防守屏障，前腰串聯中前場，兩翼拉開寬度，單前鋒突前。適合控球與快速轉換。',
+                    pros: ['✅ 中路防守穩固（雙後腰）', '✅ 邊中結合靈活', '✅ 適合高位逼搶'],
+                    players: [
+                        { x: 50, y: 88, type: 'gk' }, // GK
+                        { x: 25, y: 28, type: 'def' }, { x: 50, y: 22, type: 'def' }, { x: 75, y: 28,
+                        type: 'def' }, { x: 25, y: 72, type: 'def' }, // back 4 (但用兩個CB+兩個FB)
+                        { x: 38, y: 42, type: 'mid' }, { x: 62, y: 42, type: 'mid' }, // 雙後腰
+                        { x: 22, y: 50, type: 'mid' }, { x: 50, y: 52, type: 'mid' }, { x: 78, y: 50,
+                            type: 'mid' }, // 3攻中
+                        { x: 50, y: 62, type: 'fwd' }, // 前鋒
+                    ]
+                },
+                '433': {
+                    name: '4-3-3 陣型',
+                    detail: '<b>主攻邊路與高位逼搶</b>，三前鋒壓制對方防線，中場三人組控制節奏。適合擁有速度型翼鋒的球隊。',
+                    pros: ['✅ 邊路進攻火力強', '✅ 前場逼搶壓力大', '⚠ 中場防守覆蓋要求高'],
+                    players: [
+                        { x: 50, y: 88, type: 'gk' },
+                        { x: 22, y: 28, type: 'def' }, { x: 50, y: 22, type: 'def' }, { x: 78, y: 28,
+                        type: 'def' }, { x: 22, y: 68, type: 'def' },
+                        { x: 30, y: 42, type: 'mid' }, { x: 50, y: 40, type: 'mid' }, { x: 70, y: 42,
+                            type: 'mid' },
+                        { x: 22, y: 56, type: 'fwd' }, { x: 50, y: 58, type: 'fwd' }, { x: 78, y: 56,
+                        type: 'fwd' },
+                    ]
+                },
+                '352': {
+                    name: '3-5-2 陣型',
+                    detail: '<b>翼衛上下走動</b>，主打控球與中場人數優勢。三中堅提供防守穩定性，雙前鋒互相配合。',
+                    pros: ['✅ 中場控制力強', '✅ 翼衛提供寬度', '⚠ 邊路防守可能被針對'],
+                    players: [
+                        { x: 50, y: 88, type: 'gk' },
+                        { x: 35, y: 24, type: 'def' }, { x: 50, y: 20, type: 'def' }, { x: 65, y: 24,
+                        type: 'def' },
+                        { x: 18, y: 38, type: 'mid' }, { x: 38, y: 42, type: 'mid' }, { x: 50, y: 38,
+                            type: 'mid' },
+                        { x: 62, y: 42, type: 'mid' }, { x: 82, y: 38, type: 'mid' },
+                        { x: 40, y: 58, type: 'fwd' }, { x: 60, y: 58, type: 'fwd' },
+                    ]
+                },
+                '541': {
+                    name: '5-4-1 陣型',
+                    detail: '<b>防守反擊專用</b>，五後衛縮後場形成鐵桶陣，抓對方失誤後快速反擊。適合弱隊對抗強隊。',
+                    pros: ['✅ 防守極度穩固', '✅ 反擊速度快', '⚠ 控球率通常較低'],
+                    players: [
+                        { x: 50, y: 88, type: 'gk' },
+                        { x: 18, y: 28, type: 'def' }, { x: 38, y: 22, type: 'def' }, { x: 50, y: 20,
+                            type: 'def' },
+                        { x: 62, y: 22, type: 'def' }, { x: 82, y: 28, type: 'def' },
+                        { x: 22, y: 44, type: 'mid' }, { x: 42, y: 48, type: 'mid' }, { x: 58, y: 48,
+                            type: 'mid' },
+                        { x: 78, y: 44, type: 'mid' },
+                        { x: 50, y: 62, type: 'fwd' },
+                    ]
+                },
+                '442': {
+                    name: '4-4-2 經典陣型',
+                    detail: '<b>英格蘭傳統陣型</b>，兩條平行四人線，結構清晰。雙前鋒互相配合，中場四人組覆蓋寬度。',
+                    pros: ['✅ 結構簡單清晰', '✅ 雙前鋒配合多變', '⚠ 中場可能被三人陣型壓制'],
+                    players: [
+                        { x: 50, y: 88, type: 'gk' },
+                        { x: 22, y: 28, type: 'def' }, { x: 50, y: 22, type: 'def' }, { x: 78, y: 28,
+                        type: 'def' }, { x: 22, y: 68, type: 'def' },
+                        { x: 22, y: 44, type: 'mid' }, { x: 42, y: 42, type: 'mid' }, { x: 58, y: 42,
+                            type: 'mid' },
+                        { x: 78, y: 44, type: 'mid' },
+                        { x: 40, y: 60, type: 'fwd' }, { x: 60, y: 60, type: 'fwd' },
+                    ]
+                },
+            };
+
+            function renderFormation(key) {
+                const data = formationData[key];
+                if (!data) return;
+                // 更新標籤
+                formationLabel.textContent = key.replace(/(\d)(\d)(\d)(\d)/, '$1-$2-$3-$4').replace(/(\d)(\d)(\d)/,
+                    '$1-$2-$3');
+                formationNameEl.textContent = data.name;
+                formationDetailEl.innerHTML = data.detail;
+                formationProsEl.innerHTML = data.pros.map(p => '<li>' + p + '</li>').join('');
+                // 清除舊球員
+                const existingPlayers = formationPitch.querySelectorAll('.formation-player');
+                existingPlayers.forEach(el => el.remove());
+                // 繪製新球員
+                data.players.forEach(p => {
+                    const dot = document.createElement('div');
+                    dot.className = 'formation-player';
+                    if (p.type === 'gk') dot.classList.add('gk');
+                    dot.style.left = p.x + '%';
+                    dot.style.top = p.y + '%';
+                    formationPitch.appendChild(dot);
+                });
+                // 更新按鈕狀態
+                formationBtns.forEach(b => {
+                    b.classList.toggle('active', b.dataset.formation === key);
+                });
+            }
+
+            formationBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    renderFormation(btn.dataset.formation);
+                });
+            });
+            // 初始渲染
+            renderFormation('4231');
+
+            // ═══════════════ 全局初始化 ═══════════════
+            console.log('⚽ 世界盃足球專業觀賽知識庫已就緒');
+            console.log('📐 越位互動功能：拖動球場中的圓點來即時判斷越位');
+            console.log('📱 支援桌面端滑鼠拖拽及移動端觸控拖拽');
+            console.log('🔄 點擊「越位示例」「合法示例」「邊緣情況」快速切換場景');
+        })();
+    </script>
 </body>
 </html>
